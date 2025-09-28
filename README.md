@@ -218,3 +218,30 @@ Note: `@tests` is gitignored by default. For CI, remove or adjust the ignore rul
 
 OpenAI Images accepts the following sizes only: `1024x1024`, `1024x1536`, `1536x1024`, or `auto`.
 Use one of these values for `size`. If a different size is sent, the backend should respond with a clear `400` and the allowed list. The SDK types reflect the allowed set.
+
+### Configuration resolution
+
+The SDK resolves configuration at runtime in this order:
+- `process.env` (Node/SSR/tests)
+- `import.meta.env` (Vite/browser)
+- Built-in defaults (serverUrl falls back to `https://anyx.dev`)
+
+You can always override by passing options to `createAnyxClient({ baseUrl, projectId })`.
+
+### Security and headers
+
+- Frontend SDK intentionally sends only `x-project-id`. It does NOT send `x-api-key`.
+- Your backend proxy at `serverUrl` must attach `x-api-key` before forwarding to the Common API.
+- Server/test contexts can include the key explicitly:
+
+```ts
+import { createAnyxClient } from '@/sdk'
+const anyx = createAnyxClient({ apiKey: process.env.ANYX_COMMON_API_KEY })
+```
+
+### Troubleshooting
+
+- Error: `Missing x-api-key or x-project-id`
+  - Ensure `projectId` is set (env, config, or `createAnyxClient({ projectId })`).
+  - Ensure your backend proxy injects `x-api-key` (browser should not send it).
+  - For server/test usage only, pass `apiKey` to `createAnyxClient`.
