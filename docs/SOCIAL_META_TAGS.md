@@ -15,7 +15,7 @@ The `index.html` template contains placeholder variables for social sharing meta
 | `{{PROJECT_NAME}}` | Project display name | "ZenithFI" | `brand.name` |
 | `{{PROJECT_DESCRIPTION}}` | Short description (150-160 chars) | "Modern financial dashboard for tracking investments" | `brand.description` or generate from name |
 | `{{PROJECT_URL}}` | Deployed project URL | "https://zenithfi.vercel.app" | Vercel deployment URL |
-| `{{PROJECT_FAVICON_URL}}` | Favicon image URL | "https://zenithfi.vercel.app/favicon.png" | Upload to project or use default |
+| ~~`{{PROJECT_FAVICON_URL}}`~~ | Favicon image URL | "/anyx-logo.png" | **Always uses Anyx logo (not a placeholder)** |
 | `{{PROJECT_THEME_COLOR}}` | Browser theme color (hex) | "#3b82f6" | `brand.colors.primary` |
 | `{{PROJECT_OG_IMAGE_URL}}` | Social share preview image (1200×630px) | "https://zenithfi.vercel.app/og-image.png" | Generate or use default |
 
@@ -32,7 +32,6 @@ function injectMetaTags(htmlTemplate: string, project: Project): string {
     .replace(/\{\{PROJECT_NAME\}\}/g, project.brand.name)
     .replace(/\{\{PROJECT_DESCRIPTION\}\}/g, getProjectDescription(project))
     .replace(/\{\{PROJECT_URL\}\}/g, project.deploymentUrl)
-    .replace(/\{\{PROJECT_FAVICON_URL\}\}/g, project.faviconUrl || `${project.deploymentUrl}/anyx-logo.png`)
     .replace(/\{\{PROJECT_THEME_COLOR\}\}/g, project.brand.colors.primary)
     .replace(/\{\{PROJECT_OG_IMAGE_URL\}\}/g, project.ogImageUrl || `${project.deploymentUrl}/anyx-logo.png`);
 }
@@ -66,10 +65,11 @@ const defaults = {
   PROJECT_NAME: 'Built with Anyx',
   PROJECT_DESCRIPTION: 'A modern SaaS application built with Anyx.app',
   PROJECT_URL: 'https://anyx.app',
-  PROJECT_FAVICON_URL: '/anyx-logo.png',
   PROJECT_THEME_COLOR: '#000000',
   PROJECT_OG_IMAGE_URL: 'https://anyx.app/og-image.png'
 };
+
+// Note: Favicon always uses /anyx-logo.png (not configurable)
 ```
 
 ---
@@ -171,10 +171,10 @@ ALTER TABLE projects ADD COLUMN favicon_url TEXT;
 ## Frontend Changes Made
 
 **File**: `index.html`
-- ✅ Added 6 placeholder variables
+- ✅ Added 5 placeholder variables
 - ✅ Added Open Graph meta tags
 - ✅ Added Twitter Card meta tags
-- ✅ Changed favicon to use placeholder
+- ✅ Favicon uses Anyx logo (not configurable)
 
 **No code changes required** - purely HTML template modification.
 
