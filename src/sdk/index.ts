@@ -4,6 +4,8 @@ export {
   type AnyxClientOptions,
   type LlmRequest,
   type LlmResponse,
+  type VisionRequest,
+  type VisionResponse,
   type ImageRequest,
   type ImageResponse,
   type EmailRequest,

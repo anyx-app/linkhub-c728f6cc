@@ -69,6 +69,15 @@ const LlmResponseSchema = z.object({
 });
 export type LlmResponse = z.infer<typeof LlmResponseSchema>;
 
+const VisionResponseSchema = z.object({
+  success: z.boolean(),
+  model: z.string(),
+  text: z.string(),
+  imagesProcessed: z.number(),
+  requestId: z.string().optional(),
+});
+export type VisionResponse = z.infer<typeof VisionResponseSchema>;
+
 const ImageResponseSchema = z.object({
   success: z.boolean(),
   model: z.string(),
@@ -98,6 +107,12 @@ export type LlmMessage = {
 export type LlmRequest = {
   model: string; // server-side enforces tier/model policy
   messages: LlmMessage[];
+};
+
+export type VisionRequest = {
+  prompt: string;
+  images: string[]; // URLs or base64 data URIs
+  model?: "gpt-4o-mini" | "gpt-4o" | (string & object); // defaults to gpt-4o-mini
 };
 
 // OpenAI Images accepted sizes: 1024x1024, 1024x1536, 1536x1024, or 'auto'
@@ -131,6 +146,7 @@ export type AnyxClientOptions = {
 // Public client interface
 export type AnyxClient = {
   llm: (request: LlmRequest) => Promise<LlmResponse>;
+  vision: (request: VisionRequest) => Promise<VisionResponse>;
   image: (request: ImageRequest) => Promise<ImageResponse>;
   email: (request: EmailRequest) => Promise<EmailResponse>;
   sms: (request: SmsRequest) => Promise<SmsResponse>;
@@ -278,6 +294,11 @@ export function createAnyxClient(options?: AnyxClientOptions): AnyxClient {
     llm: async (request: LlmRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
       return doRequest<LlmResponse>(baseUrl, projectId, apiKey, "/api/common/llm", request, (data) => LlmResponseSchema.parse(data), retryCfg);
+    },
+    vision: async (request: VisionRequest) => {
+      if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
+      const withDefaults = { model: "gpt-4o-mini" as const, ...request };
+      return doRequest<VisionResponse>(baseUrl, projectId, apiKey, "/api/common/llm/vision", withDefaults, (data) => VisionResponseSchema.parse(data), retryCfg);
     },
     image: async (request: ImageRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
