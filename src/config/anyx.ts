@@ -9,7 +9,7 @@ function readImportMetaEnv(): Partial<AnyxConfig> {
   const env = meta.env ?? {};
   return {
     serverUrl: env.VITE_ANYX_SERVER_URL as string | undefined,
-    projectId: env.VITE_ANYX_PROJECT_ID as string | undefined,
+    projectId: env.VITE_PROJECT_ID as string | undefined,
     apiKey: env.ANYX_COMMON_API_KEY as string | undefined,
   };
 }
@@ -18,7 +18,7 @@ function readProcessEnv(): Partial<AnyxConfig> {
   const env = typeof process !== "undefined" ? process.env ?? {} : {};
   return {
     serverUrl: env.VITE_ANYX_SERVER_URL || env.ANYX_SERVER_URL,
-    projectId: env.VITE_ANYX_PROJECT_ID || env.ANYX_PROJECT_ID,
+    projectId: env.VITE_PROJECT_ID || env.ANYX_PROJECT_ID,
     apiKey: env.ANYX_COMMON_API_KEY,
   };
 }

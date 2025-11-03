@@ -44,9 +44,9 @@ export const createProjectChannel = (roomName: string): RealtimeChannel | null =
     return null
   }
 
-  const projectId = import.meta.env.VITE_ANYX_PROJECT_ID
+  const projectId = import.meta.env.VITE_PROJECT_ID
   if (!projectId) {
-    console.warn('[Realtime] VITE_ANYX_PROJECT_ID not set, using unnamespaced channel')
+    console.warn('[Realtime] VITE_PROJECT_ID not set, using unnamespaced channel')
     return realtimeClient.channel(roomName)
   }
 

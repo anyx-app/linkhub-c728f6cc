@@ -263,7 +263,7 @@ This boilerplate includes a thin, typed SDK for the Anyx Common API.
   - `email({ to, subject, html })`
   - `sms({ to, body })`
 - Behavior:
-  - Sends requests to your backend at `VITE_ANYX_SERVER_URL` (which should attach `x-api-key`), and includes `x-project-id` from `VITE_ANYX_PROJECT_ID`.
+  - Sends requests to your backend at `VITE_ANYX_SERVER_URL` (which should attach `x-api-key`), and includes `x-project-id` from `VITE_PROJECT_ID`.
   - Maps errors to typed classes: `AuthError (401)`, `TierError (403)`, `CreditExceededError (402)`, `RateLimitedError (429)`, `ProviderError (5xx)`, `HttpError`.
   - Validates responses with `zod`.
 
@@ -275,7 +275,7 @@ If you want to override via env (Vite requires the `VITE_` prefix):
 
 ```env
 VITE_ANYX_SERVER_URL=https://your-anyx-server.example.com
-VITE_ANYX_PROJECT_ID=<your-project-id>
+VITE_PROJECT_ID=<your-project-id>
 ```
 
 You can also override at runtime:
@@ -294,7 +294,7 @@ const anyx = createAnyxClient({
 ```ts
 import { createAnyxClient, TierError, CreditExceededError } from '@/sdk'
 
-const anyx = createAnyxClient() // reads VITE_ANYX_SERVER_URL and VITE_ANYX_PROJECT_ID
+const anyx = createAnyxClient() // reads VITE_ANYX_SERVER_URL and VITE_PROJECT_ID
 
 // LLM
 const llm = await anyx.llm({
@@ -330,7 +330,7 @@ Integration tests live under `@tests/sdk/integration` and are disabled by defaul
 
 ```env
 VITE_ANYX_SERVER_URL=https://your-anyx-server.example.com
-VITE_ANYX_PROJECT_ID=<your-project-id>
+VITE_PROJECT_ID=<your-project-id>
 ```
 
 2) Run tests explicitly:

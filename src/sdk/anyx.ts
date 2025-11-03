@@ -139,7 +139,7 @@ export type SmsRequest = {
 // Client config
 export type AnyxClientOptions = {
   baseUrl?: string; // defaults to import.meta.env.VITE_ANYX_SERVER_URL
-  projectId?: string; // defaults to import.meta.env.VITE_ANYX_PROJECT_ID
+  projectId?: string; // defaults to import.meta.env.VITE_PROJECT_ID
   apiKey?: string; // optional; for server-side or test environments only
   retry?: {
     retries?: number; // default 2 (total attempts = retries + 1)

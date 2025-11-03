@@ -30,7 +30,7 @@ Your project includes the **Anyx Common API** for server-side capabilities: LLM,
 ```env
 VITE_ANYX_COMMON_API_KEY=<auto-filled>
 VITE_ANYX_SERVER_URL=<auto-filled from NEXT_PUBLIC_API_URL>
-VITE_ANYX_PROJECT_ID=<auto-filled project id>
+VITE_PROJECT_ID=<auto-filled project id>
 ```
 
 ## API Endpoints (Server-Side)
@@ -94,7 +94,7 @@ Credits are evaluated within the active subscription period (`subscriptions.curr
 ```typescript
 import { createAnyxClient } from '@/sdk'
 
-// Uses environment variables (VITE_ANYX_SERVER_URL, VITE_ANYX_PROJECT_ID)
+// Uses environment variables (VITE_ANYX_SERVER_URL, VITE_PROJECT_ID)
 const anyx = createAnyxClient()
 
 // Or override manually:
