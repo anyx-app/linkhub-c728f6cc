@@ -35,6 +35,7 @@
   },
   "include": [
     "src",
+    "api",
     "@tests",
     "vitest.config.ts"
   ],
