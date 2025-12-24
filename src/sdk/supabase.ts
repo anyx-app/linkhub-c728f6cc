@@ -127,8 +127,29 @@ class QueryBuilder {
   }
 
   async execute() {
-    const projectId = import.meta.env.VITE_PROJECT_ID;
-    const backendUrl = import.meta.env.VITE_ANYX_SERVER_URL;
+    // Helper to get environment variables safely in both Vite (browser) and Node.js (serverless) environments
+    const getEnv = (key: string) => {
+      // Check Node.js process.env first (for Vercel/Serverless)
+      // eslint-disable-next-line
+      if (typeof process !== 'undefined' && process.env && process.env[key]) {
+        // eslint-disable-next-line
+        return process.env[key];
+      }
+      // Check Vite import.meta.env (for Browser)
+      // eslint-disable-next-line
+      if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+        // eslint-disable-next-line
+        return import.meta.env[key];
+      }
+      return undefined;
+    };
+
+    const projectId = getEnv('VITE_PROJECT_ID') || getEnv('NEXT_PUBLIC_PROJECT_ID');
+    const backendUrl = getEnv('VITE_ANYX_SERVER_URL') || getEnv('NEXT_PUBLIC_ANYX_SERVER_URL');
+
+    if (!projectId || !backendUrl) {
+      throw new Error('CRITICAL_CONFIG_ERROR: Missing VITE_PROJECT_ID or VITE_ANYX_SERVER_URL environment variables. Please check your .env file or deployment settings.');
+    }
 
     const payload: Record<string, unknown> = {
       table: this.tableName,
@@ -153,19 +174,35 @@ class QueryBuilder {
       payload.single = this.singleMode;
     }
 
-    const response = await fetch(`${backendUrl}/api/projects/${projectId}/query`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch(`${backendUrl}/api/projects/${projectId}/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Query failed');
+      if (!response.ok) {
+        const errorText = await response.text();
+        try {
+          const error = JSON.parse(errorText);
+          throw new Error(error.error || `Query failed with status: ${response.status}`);
+        } catch (e) {
+          throw new Error(`Query failed with status: ${response.status} and response: ${errorText}`);
+        }
+      }
+
+      const result = await response.json();
+      return result;
+
+    } catch (error) {
+      // Log the specific network error for easier debugging
+      console.error("SDK Network Error:", error);
+      // Re-throw a generic error to be handled by the UI
+      if (error instanceof Error && error.message.startsWith('CRITICAL_CONFIG_ERROR')) {
+          throw error;
+      }
+      throw new Error('Network request failed. Could not connect to the backend.');
     }
-
-    const result = await response.json();
-    return result;
   }
 
   then<TResult1 = unknown, TResult2 = never>(
